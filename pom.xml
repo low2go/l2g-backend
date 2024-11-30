@@ -28,19 +28,40 @@
 	</scm>
 	<properties>
 		<java.version>23</java.version>
+		<aws.java.sdk.version>2.29.23</aws.java.sdk.version>
 	</properties>
 	<dependencies>
+		<!-- Lombok to generate getters, setters, toString(), etc. -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.36</version>
+			<scope>provided</scope>
 		</dependency>
 
+		<!-- AWS SDK BOM (Bill of Materials) for managing versions of AWS SDK components -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>bom</artifactId>
+			<version>${aws.java.sdk.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+
+		<!-- Spring Boot Starter Web for web applications (includes Spring MVC) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- Spring Boot Starter Test for testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 
 	<build>
 		<plugins>
