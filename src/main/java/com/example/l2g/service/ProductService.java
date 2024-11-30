@@ -17,7 +17,7 @@ public class ProductService {
     }
 
     public List<StockedProduct> getAllProducts() {
-        return null;
+        return productDao.getAllProducts();
     }
 
     public StockedProduct getProductByProductId(String productId) {

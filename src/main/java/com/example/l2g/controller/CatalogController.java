@@ -22,7 +22,7 @@ public class CatalogController {
         this.productService = productService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<StockedProduct> getAllProducts() {
         return productService.getAllProducts();
     }
