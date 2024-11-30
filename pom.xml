@@ -30,6 +30,18 @@
 		<java.version>23</java.version>
 		<aws.java.sdk.version>2.29.23</aws.java.sdk.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${aws.java.sdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<!-- Lombok to generate getters, setters, toString(), etc. -->
 		<dependency>
@@ -39,14 +51,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- AWS SDK BOM (Bill of Materials) for managing versions of AWS SDK components -->
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>bom</artifactId>
-			<version>${aws.java.sdk.version}</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
+
 
 		<!-- Spring Boot Starter Web for web applications (includes Spring MVC) -->
 		<dependency>
@@ -59,6 +64,28 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>dynamodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>dynamodb-enhanced</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.github.derjust</groupId>
+			<artifactId>spring-data-dynamodb</artifactId>
+			<version>5.1.0</version>
 		</dependency>
 	</dependencies>
 

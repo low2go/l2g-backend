@@ -27,8 +27,9 @@ public class CatalogController {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{sku}")
-    public StockedProduct getProductBySku(@PathVariable String sku) {
-        return productService.getProductBySku(sku);
+    @GetMapping("/{productId}")
+    public StockedProduct getProductByProductId(@PathVariable String productId) {
+        System.out.println("received request");
+        return productService.getProductByProductId(productId);
     }
 }

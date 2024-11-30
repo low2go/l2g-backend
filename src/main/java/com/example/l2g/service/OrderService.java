@@ -1,8 +1,10 @@
 package com.example.l2g.service;
 
 import com.example.l2g.model.receiving.CustomerOrderDTO;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class OrderService {
 
     public void fulfillCustomerOrder(CustomerOrderDTO orderDTO) {
