@@ -7,10 +7,12 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 @DynamoDbBean
 public class StockedProduct {
 
-    private String productId; // Product ID
+    private String productId;
     private String name;
+    private int stock;
+    private double price;
+    private String imageUrl;
 
-    // Getter and Setter for productId
     @DynamoDbPartitionKey
     public String getProductId() {
         return productId;
@@ -20,12 +22,35 @@ public class StockedProduct {
         this.productId = productId;
     }
 
-    // Getter and Setter for name
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
