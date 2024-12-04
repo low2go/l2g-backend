@@ -7,18 +7,18 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 @DynamoDbBean
 public class StockedProduct {
 
-    private String productId;
+    private long productId;
     private String name;
     private int stock;
     private double price;
     private String imageUrl;
 
     @DynamoDbPartitionKey
-    public String getProductId() {
+    public long getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public void setProductId(long productId) {
         this.productId = productId;
     }
 

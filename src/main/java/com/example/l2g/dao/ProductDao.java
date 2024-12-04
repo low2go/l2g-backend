@@ -1,6 +1,7 @@
 package com.example.l2g.dao;
 
 import com.example.l2g.model.sending.StockedProduct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -19,6 +20,10 @@ public class ProductDao {
     private final DynamoDbClient dynamoDbClient;
     private final String tableName = "Products";
     private final String partitionKey = "ProductId";
+
+    @Value("${awsS3.baseurl}")
+    private String S3_BASE_URL;
+
 
     public ProductDao(DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
@@ -81,15 +86,24 @@ public class ProductDao {
         System.out.println(returnedItem.toString());
 
         if (returnedItem.containsKey("ProductId")) {
-            product.setProductId(returnedItem.get("ProductId").n());  // Map id
+            product.setProductId(Integer.parseInt(returnedItem.get("ProductId").n()));
+        }
+        if (returnedItem.containsKey("Name")) {
+            product.setName(returnedItem.get("Name").s());
+        }
+        if (returnedItem.containsKey("Stock")) {
+            product.setStock(Integer.parseInt(returnedItem.get("Stock").n()));
+        }
+        if (returnedItem.containsKey("Price")) {
+            product.setPrice(Double.parseDouble(returnedItem.get("Price").n()));
+        }
+        if (returnedItem.containsKey("url")) {
+            product.setImageUrl(S3_BASE_URL + returnedItem.get("url").s());
         }
 
-        // Map other attributes, if they exist (like "name" in this case)
-        if (returnedItem.containsKey("Name")) {
-            product.setName(returnedItem.get("Name").s());  // Map name
-        }
         return product;
     }
+
 
 
 
