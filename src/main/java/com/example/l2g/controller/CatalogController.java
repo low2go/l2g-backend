@@ -4,10 +4,7 @@ package com.example.l2g.controller;
 import com.example.l2g.model.sending.StockedProduct;
 import com.example.l2g.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,4 +29,11 @@ public class CatalogController {
         System.out.println("received request");
         return productService.getProductByProductId(productId);
     }
+
+    @GetMapping("/search")
+    public List<StockedProduct> search(@RequestParam String query) {
+        return productService.searchDBFromQuery(query);
+    }
+
+
 }

@@ -81,6 +81,8 @@ public class ProductDao {
     }
 
 
+
+
     private StockedProduct mapToStockedProduct(Map<String, AttributeValue> returnedItem) {
         StockedProduct product = new StockedProduct();
         System.out.println(returnedItem.toString());

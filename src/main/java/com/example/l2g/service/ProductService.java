@@ -4,6 +4,7 @@ import com.example.l2g.dao.ProductDao;
 import com.example.l2g.model.sending.StockedProduct;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,18 @@ public class ProductService {
     public StockedProduct getProductByProductId(String productId) {
         return productDao.getProductById(productId);
     }
+
+    public List<StockedProduct> searchDBFromQuery(String query) {
+        List<StockedProduct> allProducts = productDao.getAllProducts();
+        List<StockedProduct> matchingProducts = new ArrayList<>();
+
+        for (StockedProduct product : allProducts) {
+            String productName = product.getName();
+            if (productName.toLowerCase().contains(query.toLowerCase())) {
+                matchingProducts.add(product);
+            }
+        }
+        return matchingProducts;
+    }
+
 }
