@@ -19,19 +19,27 @@ jobs:
           echo "${{ secrets.DEV_EC2_PEM }}" > ~/.ssh/low2gostores.pem
           chmod 600 ~/.ssh/low2gostores.pem
 
+      - name: Build the Project
+        run: |
+          mvn clean package -Dmaven.test.skip=true
+          echo "Build complete!"
+
       - name: Deploy to EC2
         run: |
-          # Connect to EC2 and kill the previous Java process if running
-          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/low2gostores.pem ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com << 'EOF'
-            # Kill existing Java processes
-            ps aux | grep '[j]ava' | awk '{print $2}' | xargs sudo kill -9 || true
-          EOF
+          # Dynamically find the built JAR file
+          JAR_FILE=$(ls target/l2g-backend-*.jar | head -n 1)
+          echo "Deploying JAR file: $JAR_FILE"
 
-          # Copy the built jar file to EC2
-          scp -i ~/.ssh/low2gostores.pem target/app.jar ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com:/home/ubuntu/app.jar
-          
-          # Restart the application
-          ssh -i ~/.ssh/low2gostores.pem ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com << 'EOF'
+          # SSH commands to kill old Java processes, copy new JAR, and restart the app
+          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/low2gostores.pem ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com << 'EOF'
+            # Kill existing Java processes if any
+            ps aux | grep '[j]ava' | awk '{print $2}' | xargs sudo kill -9 || true
+
+            # Copy the new JAR file and restart the application
+            echo "Copying new JAR file"
+            scp -i ~/.ssh/low2gostores.pem $JAR_FILE ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com:/home/ubuntu/app.jar
+
             # Run the new application
+            echo "Starting new application"
             nohup java -jar /home/ubuntu/app.jar & 
           EOF
