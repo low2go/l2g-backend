@@ -41,5 +41,5 @@ jobs:
 
             # Run the new application
             echo "Starting new application"
-            nohup java -jar /home/ubuntu/l2g-backend-0.0.1-SNAPSHOT.jar & 
+            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/l2g-backend-0.0.1-SNAPSHOT.jar & 
           EOF
