@@ -22,7 +22,7 @@ jobs:
       - name: Deploy to EC2
         run: |
           # Connect to EC2 and kill the previous Java process if running
-          ssh -v -i ~/.ssh/low2gostores.pem ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com "pkill -f java || true"
+          ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/low2gostores.pem ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com "pkill -f java || true"
           
           # Copy the built jar file to EC2
           scp -i ~/.ssh/low2gostores.pem target/app.jar ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com:/home/ubuntu/app.jar
