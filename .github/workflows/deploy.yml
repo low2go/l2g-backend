@@ -41,7 +41,7 @@ jobs:
 
             # Run the new application
             echo "Starting new application"
-            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/l2g-backend-0.0.1-SNAPSHOT.jar &
+            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/l2g-backend-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
 
             # Exit the SSH session
             exit
