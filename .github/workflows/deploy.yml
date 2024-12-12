@@ -37,9 +37,12 @@ jobs:
 
             # Copy the new JAR file and restart the application
             echo "Copying new JAR file"
-            scp -i ~/.ssh/low2gostores.pem $JAR_FILE ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com:/home/ubuntu/app.jar
+            scp -i ~/.ssh/low2gostores.pem $JAR_FILE ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com:/home/ubuntu/l2g-backend-0.0.1-SNAPSHOT.jar
 
             # Run the new application
             echo "Starting new application"
-            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/l2g-backend-0.0.1-SNAPSHOT.jar & 
+            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/l2g-backend-0.0.1-SNAPSHOT.jar &
+
+            # Exit the SSH session
+            exit
           EOF
