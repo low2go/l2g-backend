@@ -35,5 +35,9 @@ public class CatalogController {
         return productService.searchDBFromQuery(query);
     }
 
-
+    // Hello World endpoint for testing
+    @GetMapping("/hello")
+    public String helloWorld() {
+        return "Hello, World!";
+    }
 }
