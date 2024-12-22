@@ -44,6 +44,7 @@ jobs:
             else
               echo "No Java processes found to kill"
             fi
+          
 
             echo "Starting the new application"
             java -jar /home/ubuntu/test.jar > /home/ubuntu/app_startup.log 2>&1 &
