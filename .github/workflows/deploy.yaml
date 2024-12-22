@@ -45,11 +45,18 @@ jobs:
               echo "No Java processes found to kill"
             fi
 
-            # Start the new application
             echo "Starting the new application"
-            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/test.jar > /dev/null 2>&1 &
-            echo "Application started successfully"
-
+            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/test.jar > /home/ubuntu/app_startup.log 2>&1 &
+            sleep 5
+            
+            # Verify if the process is running
+            if pgrep -f '/home/ubuntu/test.jar' > /dev/null; then
+            echo "Application is running successfully"
+            else
+            echo "Application failed to start. Check logs at /home/ubuntu/app_startup.log"
+            exit 1
+            fi
+          
             # Exit the SSH session
             exit
           EOF
