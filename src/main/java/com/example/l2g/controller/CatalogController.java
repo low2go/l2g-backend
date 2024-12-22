@@ -24,6 +24,7 @@ public class CatalogController {
         return productService.getAllProducts();
     }
 
+
     @GetMapping("/{productId}")
     public StockedProduct getProductByProductId(@PathVariable String productId) {
         System.out.println("received request");
