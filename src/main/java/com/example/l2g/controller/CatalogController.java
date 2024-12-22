@@ -28,6 +28,11 @@ public class CatalogController {
     @GetMapping("/{productId}")
     public StockedProduct getProductByProductId(@PathVariable String productId) {
         System.out.println("received request");
+
+        if (!productId.matches("\\d+")) { // Check if productId contains only digits
+            throw new IllegalArgumentException("Product ID must be numeric.");
+        }
+
         return productService.getProductByProductId(productId);
     }
 
