@@ -58,5 +58,7 @@ jobs:
               echo "Application failed to start. Check logs at /home/ubuntu/app_startup.log"
               exit 1
             fi
+          
+          exit
 
           EOF
