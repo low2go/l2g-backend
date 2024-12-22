@@ -34,29 +34,34 @@ jobs:
           echo "Copying JAR file to EC2 instance"
           scp -i ~/.ssh/low2gostores.pem -o StrictHostKeyChecking=no "$JAR_FILE" ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com:/home/ubuntu/test.jar
 
-          # Execute SSH commands to kill old processes and start the new application
+          # Execute SSH commands using tmux to detach the process
           ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/low2gostores.pem ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com << 'EOF'
-            echo "Killing existing Java processes"
-            pids=$(ps aux | grep '[j]ava' | awk '{print $2}')
-            if [ -n "$pids" ]; then
-              echo "Found Java processes: $pids"
-              echo "$pids" | xargs sudo kill -9 || true
-            else
-              echo "No Java processes found to kill"
-            fi
+            tmux new -d -s my_app
 
-            echo "Starting the new application"
-            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/test.jar > /home/ubuntu/app_startup.log 2>&1 &
-            sleep 5
-            
-            # Verify if the process is running
-            if pgrep -f '/home/ubuntu/test.jar' > /dev/null; then
-            echo "Application is running successfully"
-            else
-            echo "Application failed to start. Check logs at /home/ubuntu/app_startup.log"
-            exit 1
-            fi
+            tmux send-keys -t my_app "echo 'Killing existing Java processes'" ENTER
+            tmux send-keys -t my_app "pids=$(ps aux | grep '[j]ava' | awk '{print $2}')" ENTER
+            tmux send-keys -t my_app "if [ -n "\$pids" ]; then" ENTER
+            tmux send-keys -t my_app "  echo 'Found Java processes: \$pids'" ENTER
+            tmux send-keys -t my_app "  echo "\$pids" | xargs sudo kill -9 || true" ENTER
+            tmux send-keys -t my_app "else" ENTER
+            tmux send-keys -t my_app "  echo 'No Java processes found to kill'" ENTER
+            tmux send-keys -t my_app "fi" ENTER
+
+            tmux send-keys -t my_app "echo 'Starting the new application'" ENTER
+            tmux send-keys -t my_app "nohup java -jar -Dspring.profiles.active=local /home/ubuntu/test.jar > /home/ubuntu/app_startup.log 2>&1 &" ENTER
+            tmux send-keys -t my_app "sleep 5" ENTER
           
+            # Verify if the process is running
+            tmux send-keys -t my_app "if pgrep -f '/home/ubuntu/test.jar' > /dev/null; then" ENTER
+            tmux send-keys -t my_app "  echo 'Application is running successfully'" ENTER
+            tmux send-keys -t my_app "else" ENTER
+            tmux send-keys -t my_app "  echo 'Application failed to start. Check logs at /home/ubuntu/app_startup.log'" ENTER
+            tmux send-keys -t my_app "  exit 1" ENTER
+            tmux send-keys -t my_app "fi" ENTER
+          
+            # Detach from the tmux session (optional)
+            tmux detach -t my_app
+
             # Exit the SSH session
             exit
           EOF
