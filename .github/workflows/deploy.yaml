@@ -30,18 +30,25 @@ jobs:
           JAR_FILE=$(ls target/l2g-backend-*.jar | head -n 1)
           echo "Deploying JAR file: $JAR_FILE"
 
-          # SSH commands to kill old Java processes, copy new JAR, and restart the app
+          # Copy the new JAR file to the EC2 instance
+          echo "Copying JAR file to EC2 instance"
+          scp -i ~/.ssh/low2gostores.pem -o StrictHostKeyChecking=no "$JAR_FILE" ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com:/home/ubuntu/test.jar
+
+          # Execute SSH commands to kill old processes and start the new application
           ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/low2gostores.pem ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com << 'EOF'
-            # Kill existing Java processes if any
-            ps aux | grep '[j]ava' | awk '{print $2}' | xargs sudo kill -9 || true
+            echo "Killing existing Java processes"
+            pids=$(ps aux | grep '[j]ava' | awk '{print $2}')
+            if [ -n "$pids" ]; then
+              echo "Found Java processes: $pids"
+              echo "$pids" | xargs sudo kill -9 || true
+            else
+              echo "No Java processes found to kill"
+            fi
 
-            # Copy the new JAR file and restart the application
-            echo "Copying new JAR file"
-            scp -i ~/.ssh/low2gostores.pem $JAR_FILE ubuntu@ec2-13-58-26-172.us-east-2.compute.amazonaws.com:/home/ubuntu/test.jar
-
-            # Run the new application
-            echo "Starting new application"
-            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/test.jar> /dev/null 2>&1 &
+            # Start the new application
+            echo "Starting the new application"
+            nohup java -jar -Dspring.profiles.active=local /home/ubuntu/test.jar > /dev/null 2>&1 &
+            echo "Application started successfully"
 
             # Exit the SSH session
             exit
