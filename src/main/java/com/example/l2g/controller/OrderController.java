@@ -1,6 +1,6 @@
 package com.example.l2g.controller;
 
-import com.example.l2g.model.receiving.CustomerOrderDTO;
+import com.example.l2g.model.receiving.CustomerOrder;
 import com.example.l2g.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class OrderController {
 
     // Handle POST request to create a new order
     @PostMapping
-    public ResponseEntity<CustomerOrderDTO> createOrder(@Valid @RequestBody CustomerOrderDTO order) {
+    public ResponseEntity<CustomerOrder> createOrder(@Valid @RequestBody CustomerOrder order) {
 //        orderService.createOrder(order);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
