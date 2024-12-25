@@ -1,6 +1,7 @@
 package com.example.l2g.controller;
 
 
+import com.example.l2g.model.receiving.CustomerOrder;
 import com.example.l2g.model.sending.StockedProduct;
 import com.example.l2g.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,13 @@ public class CatalogController {
     public List<StockedProduct> getAllProducts() {
         return productService.getAllProducts();
     }
+
+    @PostMapping("/batch")
+    public List<StockedProduct> getBatchProducts(@RequestBody CustomerOrder order) {
+        // Fetch batch products from the service
+        return productService.getOrderItemsFromOrderedProducts(order.getProducts());
+    }
+
 
 
     @GetMapping("/search")

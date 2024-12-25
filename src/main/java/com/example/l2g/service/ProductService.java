@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -36,6 +37,12 @@ public class ProductService {
             }
         }
         return matchingProducts;
+    }
+
+    public List<StockedProduct> getOrderItemsFromOrderedProducts(Map<String, Double> products) {
+        List<String> productIds = new ArrayList<>(products.keySet());
+        return productDao.getProductsByIds(productIds);
+
     }
 
 }
