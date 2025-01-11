@@ -26,9 +26,9 @@ public class CatalogController {
     }
 
     @PostMapping("/batch")
-    public List<StockedProduct> getBatchProducts(@RequestBody CustomerOrder order) {
+    public List<StockedProduct> getBatchProducts(@RequestBody List<String> productIds) {
         // Fetch batch products from the service
-        return productService.getOrderItemsFromOrderedProducts(order.getProducts());
+        return productService.getStockedProductsFromProductIds(productIds);
     }
 
 

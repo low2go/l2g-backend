@@ -39,10 +39,8 @@ public class ProductService {
         return matchingProducts;
     }
 
-    public List<StockedProduct> getOrderItemsFromOrderedProducts(Map<String, Double> products) {
-        List<String> productIds = new ArrayList<>(products.keySet());
+    public List<StockedProduct> getStockedProductsFromProductIds(List<String> productIds) {
         return productDao.getProductsByIds(productIds);
-
     }
 
 }

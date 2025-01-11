@@ -9,5 +9,5 @@ public class CustomerOrder {
     private long orderId;
     private String customerName;
     //String Field is the product id, double is the quantity of the product
-    private Map<String, Double> products;
+    private Map<String, Integer> orderIdAndQuantityMap;
 }

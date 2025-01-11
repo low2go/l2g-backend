@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/orders")
@@ -25,9 +26,10 @@ public class OrderController {
 
 
     // Handle POST request to create a new order
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CustomerOrder> createOrder(@Valid @RequestBody CustomerOrder order) {
-//        orderService.createOrder(order);
+        //add auth verification
+        orderService.createCustomerOrder(order);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 //

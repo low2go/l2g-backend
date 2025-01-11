@@ -143,7 +143,7 @@ public class ProductDao {
         System.out.println(returnedItem.toString());
 
         if (returnedItem.containsKey("ProductId")) {
-            product.setProductId(Integer.parseInt(returnedItem.get("ProductId").s()));
+            product.setProductId(returnedItem.get("ProductId").s());
         }
         if (returnedItem.containsKey("Name")) {
             product.setName(returnedItem.get("Name").s());

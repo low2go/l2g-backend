@@ -5,7 +5,9 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @DynamoDbBean
 public class OrderToFulfill {
@@ -15,6 +17,11 @@ public class OrderToFulfill {
     private Instant orderDate;
     private double totalAmount;
     private List<OrderItem> items;
+
+    public OrderToFulfill() {
+        this.items = new ArrayList<>(); // Initialize items to prevent null pointer issues
+        this.orderId = UUID.randomUUID().toString();
+    }
 
     @DynamoDbPartitionKey
     public String getOrderId() {
@@ -64,6 +71,22 @@ public class OrderToFulfill {
 
     public void setItems(List<OrderItem> items) {
         this.items = items;
+    }
+
+    public void addItem(OrderItem item) {
+        this.items.add(item);
+    }
+
+    @Override
+    public String toString() {
+        return "OrderToFulfill{" +
+                "orderId='" + orderId + '\'' +
+                ", customerId='" + customerId + '\'' +
+                ", orderStatus='" + orderStatus + '\'' +
+                ", orderDate=" + orderDate +
+                ", totalAmount=" + totalAmount +
+                ", items=" + items +
+                '}';
     }
 
 
