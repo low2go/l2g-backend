@@ -80,6 +80,61 @@ public class ProductDao {
 
     }
 
+    public List<StockedProduct> getProductsByIds(List<String> productIds) {
+        System.out.println("Received productIds: " + productIds);
+
+        // Prepare the keys for the batch request
+        List<Map<String, AttributeValue>> keys = productIds.stream()
+                .map(id -> Map.of(partitionKey, AttributeValue.builder().s(id).build()))
+                .collect(Collectors.toList());
+
+        // Create the batch request
+        Map<String, KeysAndAttributes> requestItems = Map.of(
+                tableName, KeysAndAttributes.builder().keys(keys).build()
+        );
+
+        // BatchGetItem request
+        BatchGetItemRequest batchRequest = BatchGetItemRequest.builder()
+                .requestItems(requestItems)
+                .build();
+
+        List<Map<String, AttributeValue>> allItems = new ArrayList<>();
+        try {
+            // Execute the batch get operation
+            BatchGetItemResponse response;
+            Map<String, KeysAndAttributes> unprocessedKeys = requestItems;
+
+            // Continue fetching if there are unprocessed keys
+            do {
+                response = dynamoDbClient.batchGetItem(batchRequest);
+
+                // Retrieve the results for the current table
+                List<Map<String, AttributeValue>> items = response.responses().get(tableName);
+                if (items != null) {
+                    allItems.addAll(items);
+                }
+
+                // Check for unprocessed keys, and prepare the next batch if needed
+                unprocessedKeys = response.unprocessedKeys();
+                if (!unprocessedKeys.isEmpty()) {
+                    batchRequest = BatchGetItemRequest.builder()
+                            .requestItems(unprocessedKeys)
+                            .build();
+                }
+            } while (!unprocessedKeys.isEmpty());
+
+            // Map the results to StockedProduct objects
+            return allItems.stream()
+                    .map(this::mapToStockedProduct)
+                    .collect(Collectors.toList());
+
+        } catch (DynamoDbException e) {
+            System.err.println("Error fetching items: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+
 
 
 
@@ -88,7 +143,7 @@ public class ProductDao {
         System.out.println(returnedItem.toString());
 
         if (returnedItem.containsKey("ProductId")) {
-            product.setProductId(Integer.parseInt(returnedItem.get("ProductId").s()));
+            product.setProductId(returnedItem.get("ProductId").s());
         }
         if (returnedItem.containsKey("Name")) {
             product.setName(returnedItem.get("Name").s());

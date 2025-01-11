@@ -1,6 +1,7 @@
 package com.example.l2g.controller;
 
-import com.example.l2g.model.receiving.CustomerOrderDTO;
+import com.example.l2g.model.receiving.CustomerOrder;
+import com.example.l2g.model.sending.StockedProduct;
 import com.example.l2g.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/orders")
@@ -22,10 +26,17 @@ public class OrderController {
 
 
     // Handle POST request to create a new order
-    @PostMapping
-    public ResponseEntity<CustomerOrderDTO> createOrder(@Valid @RequestBody CustomerOrderDTO order) {
-//        orderService.createOrder(order);
+    @PostMapping("/create")
+    public ResponseEntity<CustomerOrder> createOrder(@Valid @RequestBody CustomerOrder order) {
+        //add auth verification
+        orderService.createCustomerOrder(order);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+//
+//    @PostMapping("/batch")
+//    public List<StockedProduct> getBatchProducts(@RequestBody CustomerOrder order) {
+//        // Fetch batch products from the service
+//        return productService.
+//    }
 
 }
