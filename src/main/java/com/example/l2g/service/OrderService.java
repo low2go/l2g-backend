@@ -56,10 +56,10 @@ public class OrderService {
 
         //removes floating point errors
         totalPrice = new BigDecimal(totalPrice).setScale(2, RoundingMode.HALF_UP).doubleValue();
-
         orderToFulfill.setTotalAmount(totalPrice);
-
         System.out.println(orderToFulfill.toString());
+
+        //add orderId to userID table
 
         //add order to orders table
         ordersDao.addOrder(orderToFulfill);
