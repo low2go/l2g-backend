@@ -2,6 +2,7 @@ package com.example.l2g.service;
 
 import com.example.l2g.dao.OrdersDao;
 import com.example.l2g.dao.ProductDao;
+import com.example.l2g.dao.UserDataDao;
 import com.example.l2g.model.receiving.CustomerOrder;
 import com.example.l2g.model.sending.OrderItem;
 import com.example.l2g.model.sending.OrderToFulfill;
@@ -26,14 +27,16 @@ public class OrderService {
     private final ProductDao productDao;
     private final ProductService productService;
     private final OrdersDao ordersDao;
+    private final UserDataDao userDataDao;
 
-    public OrderService(ProductDao productDao, ProductService productService, OrdersDao ordersDao) {
+    public OrderService(ProductDao productDao, ProductService productService, OrdersDao ordersDao, UserDataDao userDataDao) {
         this.productDao = productDao;
         this.productService = productService;
         this.ordersDao = ordersDao;
+        this.userDataDao = userDataDao;
     }
 
-    public void createCustomerOrder(CustomerOrder incomingOrder) {
+    public void createCustomerOrder(CustomerOrder incomingOrder, String uid) {
         Map<String, Integer> orderMap = incomingOrder.getOrderIdAndQuantityMap();
         List<String> productIds = new ArrayList<>(orderMap.keySet());
         List<StockedProduct> currentProductInformation = productService.getStockedProductsFromProductIds(productIds);
@@ -56,15 +59,24 @@ public class OrderService {
 
         //removes floating point errors
         totalPrice = new BigDecimal(totalPrice).setScale(2, RoundingMode.HALF_UP).doubleValue();
-
         orderToFulfill.setTotalAmount(totalPrice);
-
         System.out.println(orderToFulfill.toString());
+
+
+
+        //add orderId to userID table
+        System.out.println("User Exists: " + userDataDao.checkUserExists(uid));
+
+        if(!userDataDao.checkUserExists(uid)) {
+            userDataDao.createUserEntry(uid);
+        }
 
         //add order to orders table
         ordersDao.addOrder(orderToFulfill);
 
         //add order reference to users table
+        userDataDao.addOrderToUser(orderToFulfill.getOrderId(), uid);
+
     }
 
     private void verifyAuthToken(String authToken) {
