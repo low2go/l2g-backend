@@ -41,7 +41,7 @@ public class OrderController {
         }
 
 
-        orderService.createCustomerOrder(order);
+        orderService.createCustomerOrder(order, uid);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
