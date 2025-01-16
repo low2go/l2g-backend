@@ -76,7 +76,11 @@ public class OrderService {
 
         //add order reference to users table
         userDataDao.addOrderToUser(orderToFulfill.getOrderId(), uid);
+    }
 
+    public ArrayList<OrderToFulfill> getUserOrders(String uid) {
+        System.out.println(userDataDao.getUserEntry(uid));
+        return null;
     }
 
     private void verifyAuthToken(String authToken) {

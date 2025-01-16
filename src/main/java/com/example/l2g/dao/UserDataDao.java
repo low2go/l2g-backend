@@ -86,6 +86,24 @@ public class UserDataDao {
         dynamoDbClient.updateItem(updateRequest);
     }
 
+    public Map<String, AttributeValue> getUserEntry(String uid) {
+        // Build the key to query the table
+        Map<String, AttributeValue> key = new HashMap<>();
+        key.put("uid", AttributeValue.builder().s(uid).build());
+
+        // Build the GetItemRequest
+        GetItemRequest getItemRequest = GetItemRequest.builder()
+                .tableName(tableName)
+                .key(key)
+                .build();
+
+        // Query DynamoDB
+        GetItemResponse response = dynamoDbClient.getItem(getItemRequest);
+
+        // Return the item if it exists, otherwise return null
+        return response.hasItem() ? response.item() : null;
+    }
+
 
 
 
