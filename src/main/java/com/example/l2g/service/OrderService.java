@@ -10,6 +10,7 @@ import com.example.l2g.model.sending.StockedProduct;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.endpoints.internal.Value;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -76,8 +77,28 @@ public class OrderService {
 
         //add order reference to users table
         userDataDao.addOrderToUser(orderToFulfill.getOrderId(), uid);
-
     }
+
+    public ArrayList<OrderToFulfill> getUserOrders(String uid) {
+        ArrayList<OrderToFulfill> orders = new ArrayList<>();
+
+        // Retrieve the Map from the DAO
+        Map<String, AttributeValue> userEntry = userDataDao.getUserEntry(uid);
+        if (userEntry == null || userEntry.isEmpty()) {
+            return orders; // Return an empty list if no data is found
+        }
+
+        List<AttributeValue> orderIds = userEntry.get("orders").l();
+
+        for (AttributeValue orderId : orderIds) {
+            OrderToFulfill order = ordersDao.getUserOrder(orderId.s());
+            orders.add(order);
+        }
+
+        return orders;
+    }
+
+
 
     private void verifyAuthToken(String authToken) {
 

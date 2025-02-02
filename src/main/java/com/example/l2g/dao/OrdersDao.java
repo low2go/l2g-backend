@@ -7,8 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +48,59 @@ public class OrdersDao {
         // Write the item to DynamoDB
         dynamoDbClient.putItem(putItemRequest);
     }
+
+    public OrderToFulfill getUserOrder(String orderId) {
+        // Create the key to fetch the order
+        Map<String, AttributeValue> key = Map.of(
+                "OrderId", AttributeValue.builder().s(orderId).build()
+        );
+
+        // Build the GetItemRequest
+        GetItemRequest getItemRequest = GetItemRequest.builder()
+                .tableName(tableName)
+                .key(key)
+                .build();
+
+        // Retrieve the item from DynamoDB
+        GetItemResponse response = dynamoDbClient.getItem(getItemRequest);
+
+        if(!response.hasItem()) {
+            return null;
+        }
+
+        OrderToFulfill orderToReturn = new OrderToFulfill();
+
+        orderToReturn.setOrderId(response.item().get("OrderId").s());
+        orderToReturn.setCustomerId(response.item().get("CustomerId").s());
+        orderToReturn.setOrderStatus(response.item().get("OrderStatus").s());
+        orderToReturn.setTotalAmount(Double.parseDouble(response.item().get("TotalAmount").n()));
+        orderToReturn.setOrderDate(Instant.parse(response.item().get("OrderDate").s()));
+
+        if (!response.item().containsKey("Items") ) {
+            return null;
+        }
+
+        List<AttributeValue> items = response.item().get("Items").l();
+
+
+        for(AttributeValue attr: items) {
+            Map<String, AttributeValue> item = attr.m(); // Extracting individual item map
+            OrderItem itemToAdd = new OrderItem();
+            itemToAdd.setProduct(item.get("Product").s());
+            itemToAdd.setPriceAtTime(Double.parseDouble(item.get("PriceAtTime").n()));
+            itemToAdd.setSubtotal(Double.parseDouble(item.get("Subtotal").n()));
+            itemToAdd.setQuantity(Integer.parseInt(item.get("Quantity").n()));
+
+            orderToReturn.addItem(itemToAdd);
+        }
+        return orderToReturn;
+
+
+
+    }
+
+
+
 
     /**
      * Maps the OrderToFulfill object to a DynamoDB item (key-value pairs).
