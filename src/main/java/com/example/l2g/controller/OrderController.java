@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -53,18 +54,19 @@ public class OrderController {
             @RequestHeader("uid") String uid,
             @RequestHeader("token") String token) {
 
-        List<OrderToFulfill> orders = new ArrayList<>();
-
         if (!firebaseService.validateUser(token, uid)) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        orderService.getUserOrders(uid);
+        List<OrderToFulfill> orders = orderService.getUserOrders(uid);
 
+        if (orders == null || orders.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.emptyList());
+        }
 
-        return null;
-
+        return ResponseEntity.ok(orders);
     }
+
 
 
 }
